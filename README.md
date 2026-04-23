@@ -35,10 +35,10 @@ Authentication is handled entirely through **Google OAuth2** — no passwords re
 
 | Student ID | Name | Module Contribution |
 |---|---|---|
-| **IT23265110** | Abeyrathna E.D.V.N | Notifications system · Role management · OAuth2 integration improvements · **Notification preferences (enable/disable per category)** *(Acceptable Innovation)* |
-| **IT23311640** | Sasmitha V.G.L | Incident ticket system · File attachments · Technician assignment & status updates |
-| **IT23252936** | Wijesingha W.L.S.A | Facilities catalogue · Resource management endpoints · Image upload for resources |
-| **IT23265936** | Kariyawasam K.P.S.S | Booking workflow · Conflict checking · **QR code check-in for approved bookings** *(Acceptable Innovation)* |
+| **IT23374324** | Mathumitha.E| Notifications system · Role management · OAuth2 integration improvements · **Notification preferences (enable/disable per category)** *(Acceptable Innovation)* |
+| **IT23164376** | Wanasinghe W M T P K  | Incident ticket system · File attachments · Technician assignment & status updates |
+| **IT23146556** | Wickramarathne SB | Facilities catalogue · Resource management endpoints · Image upload for resources |
+| **IT23153240** | Meedeniya M K J A | Booking workflow · Conflict checking · **QR code check-in for approved bookings** *(Acceptable Innovation)* |
 
 ---
 
