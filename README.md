@@ -266,19 +266,19 @@ copy(localStorage.getItem('token'))
 
 ## Features
 
-### Authentication & Authorization (IT23265110)
+### Authentication & Authorization (IT23374324)
 - Google OAuth2 single sign-on — no passwords
 - JWT tokens for stateless API security
 - Role-based access control (USER / ADMIN / TECHNICIAN)
 - Automatic admin seeding on first boot
 
-### Notification System (IT23265110)
+### Notification System (IT23374324)
 - Real-time notification bell with unread count
 - Auto-triggered notifications for bookings and tickets
 - Mark as read / delete individual or all
 - **Notification Preferences** *(Acceptable Innovation)* — users can enable/disable specific notification categories (e.g., disable `BOOKING_CREATED` while keeping `BOOKING_APPROVED`)
 
-### Incident Ticket System (IT23311640)
+### Incident Ticket System (IT23164376)
 - Users submit incident tickets with category, priority, location, description
 - Optional photo attachment per ticket
 - Admin assigns tickets to technicians
@@ -286,7 +286,7 @@ copy(localStorage.getItem('token'))
 - Threaded comments between user, technician, and admin
 - Notifications sent at each status change
 
-### Resource Management (IT23252936)
+### Resource Management (IT23146556)
 - Full CRUD for campus resources (rooms, labs, equipment)
 - Image upload per resource
 - Fields: name, type, capacity, location, status, description, amenities
@@ -295,7 +295,7 @@ copy(localStorage.getItem('token'))
 - Resource usage summary for admin analytics
 - Separate user-facing browse view (active resources only)
 
-### Booking System (IT23265936)
+### Booking System (IT23153240)
 - Users book resources with date, time, purpose, attendee count
 - Conflict detection — prevents double-booking same resource same time slot
 - Admin approves or rejects bookings (rejection requires a reason)
