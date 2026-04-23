@@ -34,14 +34,14 @@ const EditResourceForm = () => {
   });
 
   const [errors, setErrors] = useState({});
-
+//State is well structured and clearly separates UI states, form data, and validation errors
   useEffect(() => {
     const fetchResource = async () => {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(`http://localhost:8080/api/resources/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` }
-        });
+        }); // Fetch resource details from backend
         setFormData(response.data);
         if (response.data.imageUrl) {
           setImagePreview(response.data.imageUrl);
