@@ -1,3 +1,27 @@
+/* ================= THEME ================= */
+:root {
+  --accent: #22c55e;
+  --accent-bg: #052e16;
+  --accent-border: #16a34a;
+
+  --text-h: #f9fafb;
+
+  --social-bg: #1f2937;
+
+  --border: #374151;
+
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  --bg-main: #020617;
+}
+
+/* ================= BASE ================= */
+body {
+  background: var(--bg-main);
+  color: var(--text-h);
+}
+
+/* ================= COUNTER ================= */
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -17,6 +41,7 @@
   }
 }
 
+/* ================= HERO ================= */
 .hero {
   position: relative;
 
@@ -56,6 +81,7 @@
   }
 }
 
+/* ================= CENTER ================= */
 #center {
   display: flex;
   flex-direction: column;
@@ -70,6 +96,7 @@
   }
 }
 
+/* ================= NEXT STEPS ================= */
 #next-steps {
   display: flex;
   border-top: 1px solid var(--border);
@@ -78,6 +105,7 @@
   & > div {
     flex: 1 1 0;
     padding: 32px;
+
     @media (max-width: 1024px) {
       padding: 24px 20px;
     }
@@ -104,6 +132,7 @@
   }
 }
 
+/* ================= LINKS ================= */
 #next-steps ul {
   list-style: none;
   padding: 0;
@@ -130,6 +159,7 @@
     &:hover {
       box-shadow: var(--shadow);
     }
+
     .button-icon {
       height: 18px;
       width: 18px;
@@ -153,14 +183,17 @@
   }
 }
 
+/* ================= SPACER ================= */
 #spacer {
   height: 88px;
   border-top: 1px solid var(--border);
+
   @media (max-width: 1024px) {
     height: 48px;
   }
 }
 
+/* ================= TICKS ================= */
 .ticks {
   position: relative;
   width: 100%;
@@ -177,6 +210,7 @@
     left: 0;
     border-left-color: var(--border);
   }
+
   &::after {
     right: 0;
     border-right-color: var(--border);
