@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@theme {
+  --color-linear-to-br: linear-gradient(to bottom right, var(--tw-gradient-from), var(--tw-gradient-to));
+}

@@ -1,0 +1,54 @@
+# ========================
+# Java / Spring Boot
+# ========================
+back-end/target/
+back-end/.mvn/wrapper/maven-wrapper.jar
+back-end/*.class
+back-end/*.jar
+back-end/*.war
+
+# ========================
+# Uploaded user files
+# ========================
+back-end/uploads/
+front-end/uploads/
+
+# ========================
+# Node / React (Vite)
+# ========================
+front-end/node_modules/
+front-end/dist/
+front-end/dist-ssr/
+front-end/*.local
+front-end/.env
+front-end/.env.*
+
+# ========================
+# Environment / Secrets
+# ========================
+*.env
+application-local.properties
+application-secret.properties
+back-end/src/main/resources/application.properties
+
+# ========================
+# IDE / Editor
+# ========================
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+Thumbs.db
+
+# ========================
+# Logs
+# ========================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+config.bat
+node_modules
