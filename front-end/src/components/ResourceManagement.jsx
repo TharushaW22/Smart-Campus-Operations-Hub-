@@ -12,6 +12,7 @@ import {
 const cn = (...inputs) => inputs.filter(Boolean).join(' ');
 
 // eslint-disable-next-line no-unused-vars
+
 const SummaryCard = ({ title, value, icon: SummaryIcon, colorClass, loading, trend }) => (
   <div className="group bg-white p-8 rounded-[2.5rem] border border-slate-200/60 shadow-sm flex flex-col gap-6 transition-all hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1">
     <div className="flex justify-between items-start">
