@@ -40,7 +40,7 @@ export default function CreateBookingPage() {
       setResourceId(preselected)
     }
     // only on first render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps/add
   }, [])
 
   useEffect(() => {
