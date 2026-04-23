@@ -6,6 +6,7 @@ import { getBookingById, getBookingCheckInToken } from '../services/bookingServi
 import { useAuth } from '../context/AuthContext'
 import RoleSidebarLayout from '../components/RoleSidebarLayout'
 
+// Reusable field component for displaying label + value
 function Field({ label, children }) {
   return (
     <div>
@@ -16,27 +17,52 @@ function Field({ label, children }) {
 }
 
 export default function BookingDetailsPage() {
+
+  // Get booking ID from URL
   const { id } = useParams()
+
   const navigate = useNavigate()
   const location = useLocation()
+
+  // Get logged-in user details
   const { user } = useAuth()
 
+  // State for booking data
   const [booking, setBooking] = useState(null)
+
+  // Loading and error states
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  // Flash message state (for success messages)
   const [flash, setFlash] = useState('')
 
-  const [qr, setQr] = useState({ token: '', expiresAt: '', loading: false, error: '' })
+  // QR code state
+  const [qr, setQr] = useState({
+    token: '',
+    expiresAt: '',
+    loading: false,
+    error: ''
+  })
 
+  // Handle flash message from navigation state
   useEffect(() => {
     const message = location.state?.flash
     if (!message) return
+
     setFlash(message)
-    navigate(location.pathname + location.search, { replace: true, state: {} })
+
+    // Clear flash message from navigation state
+    navigate(location.pathname + location.search, {
+      replace: true,
+      state: {}
+    })
   }, [location.pathname, location.search, location.state, navigate])
 
+  // Fetch booking details from backend
   useEffect(() => {
     let mounted = true
+
     setLoading(true)
     setError('')
 
@@ -51,150 +77,181 @@ export default function BookingDetailsPage() {
       })
       .finally(() => mounted && setLoading(false))
 
+    // Cleanup to avoid memory leaks
     return () => {
       mounted = false
     }
   }, [id])
 
+  // Check if QR code should be shown (only for approved & not checked-in bookings)
   const canShowQr = booking?.status === 'APPROVED' && !booking?.checkedInAt
 
+  // Generate QR code token
   const handleLoadQr = async () => {
     if (!booking?.id) return
+
+    // Set loading state
     setQr({ token: '', expiresAt: '', loading: true, error: '' })
+
     try {
       const data = await getBookingCheckInToken(booking.id)
-      setQr({ token: data?.token ?? '', expiresAt: data?.expiresAt ?? '', loading: false, error: '' })
+
+      // Set QR token and expiry
+      setQr({
+        token: data?.token ?? '',
+        expiresAt: data?.expiresAt ?? '',
+        loading: false,
+        error: ''
+      })
     } catch (err) {
-      setQr({ token: '', expiresAt: '', loading: false, error: err.response?.data?.error ?? 'Failed to generate QR code.' })
+      setQr({
+        token: '',
+        expiresAt: '',
+        loading: false,
+        error: err.response?.data?.error ?? 'Failed to generate QR code.'
+      })
     }
   }
 
   return (
     <RoleSidebarLayout>
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between gap-3">
+      <div>
+
+        {/* Header section */}
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Booking Details</h1>
-            <p className="text-sm text-gray-500 mt-1">View booking information.</p>
+            <h1>Booking Details</h1>
+            <p>View booking information.</p>
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => navigate(-1)}
-              className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50"
-            >
-              Back
-            </button>
+
+          {/* Navigation buttons */}
+          <div>
+            <button onClick={() => navigate(-1)}>Back</button>
+
+            {/* Show edit only if booking is pending */}
             {booking?.status === 'PENDING' && (
-              <Link
-                to={`/bookings/${id}/edit`}
-                className="px-4 py-2 rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-700"
-              >
+              <Link to={`/bookings/${id}/edit`}>
                 Edit
               </Link>
             )}
           </div>
         </div>
 
+        {/* Flash message */}
         {flash && (
-          <div className="mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3 text-emerald-700">
-            <p className="text-sm font-medium">{flash}</p>
-            <button
-              onClick={() => setFlash('')}
-              className="text-xs font-bold uppercase tracking-widest text-emerald-700/80 hover:text-emerald-800"
-            >
+          <div>
+            <p>{flash}</p>
+            <button onClick={() => setFlash('')}>
               Dismiss
             </button>
           </div>
         )}
 
-        {loading && <p className="text-gray-400 text-sm mt-6">Loading booking…</p>}
-        {!loading && error && <p className="text-red-600 text-sm mt-6">{error}</p>}
+        {/* Loading and error states */}
+        {loading && <p>Loading booking…</p>}
+        {!loading && error && <p>{error}</p>}
 
+        {/* Booking details */}
         {!loading && !error && booking && (
-          <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2 bg-white border border-gray-100 rounded-2xl p-5">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm text-gray-500">Resource</p>
-                  <p className="text-lg font-semibold text-gray-800">{booking.resourceName}</p>
-                </div>
+          <div>
+
+            {/* Main booking info */}
+            <div>
+
+              {/* Resource and status */}
+              <div>
+                <p>Resource</p>
+                <p>{booking.resourceName}</p>
                 <BookingStatusBadge status={booking.status} />
               </div>
 
-              <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Booking details grid */}
+              <div>
+
+                {/* Show user info only for admin */}
                 {user?.role === 'ADMIN' && (
                   <Field label="Booked By">
-                    <p className="font-medium">{booking.userName}</p>
-                    <p className="text-xs text-gray-500">User ID: {booking.userId}</p>
+                    <p>{booking.userName}</p>
+                    <p>User ID: {booking.userId}</p>
                   </Field>
                 )}
+
                 <Field label="Date">{booking.date}</Field>
                 <Field label="Time">{booking.startTime} – {booking.endTime}</Field>
                 <Field label="Expected Attendees">{booking.expectedAttendees ?? '—'}</Field>
               </div>
 
-              <div className="mt-5">
-                <p className="text-xs text-gray-500">Purpose</p>
-                <p className="mt-1 text-sm text-gray-800 whitespace-pre-wrap">{booking.purpose || '—'}</p>
+              {/* Purpose */}
+              <div>
+                <p>Purpose</p>
+                <p>{booking.purpose || '—'}</p>
               </div>
 
-              <div className="mt-5">
-                <p className="text-xs text-gray-500">Admin Reason</p>
-                <p className="mt-1 text-sm text-gray-700 whitespace-pre-wrap">{booking.adminReason || '—'}</p>
-              </div>
-            </div>
-
-            <div className="bg-white border border-gray-100 rounded-2xl p-5">
-              <h2 className="text-sm font-semibold text-gray-800">Meta</h2>
-              <div className="mt-4 space-y-4">
-                <Field label="Booking ID">{booking.id}</Field>
-                <Field label="Created At">{booking.createdAt ?? '—'}</Field>
-                <Field label="Updated At">{booking.updatedAt ?? '—'}</Field>
-                <Field label="Checked In At">{booking.checkedInAt ?? '—'}</Field>
+              {/* Admin reason */}
+              <div>
+                <p>Admin Reason</p>
+                <p>{booking.adminReason || '—'}</p>
               </div>
             </div>
 
-            <div className="bg-white border border-gray-100 rounded-2xl p-5">
-              <h2 className="text-sm font-semibold text-gray-800">QR Check-In</h2>
+            {/* Metadata section */}
+            <div>
+              <h2>Meta</h2>
+              <Field label="Booking ID">{booking.id}</Field>
+              <Field label="Created At">{booking.createdAt ?? '—'}</Field>
+              <Field label="Updated At">{booking.updatedAt ?? '—'}</Field>
+              <Field label="Checked In At">{booking.checkedInAt ?? '—'}</Field>
+            </div>
+
+            {/* QR Check-In section */}
+            <div>
+              <h2>QR Check-In</h2>
+
+              {/* If QR not available */}
               {!canShowQr && (
-                <p className="mt-2 text-sm text-gray-500">
-                  {booking?.checkedInAt ? 'This booking is already checked in.' : 'QR is available after approval.'}
+                <p>
+                  {booking?.checkedInAt
+                    ? 'This booking is already checked in.'
+                    : 'QR is available after approval.'}
                 </p>
               )}
 
+              {/* If QR can be shown */}
               {canShowQr && (
-                <div className="mt-3">
+                <div>
+
+                  {/* Show button if QR not generated */}
                   {!qr.token ? (
-                    <button
-                      onClick={handleLoadQr}
-                      disabled={qr.loading}
-                      className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 disabled:opacity-60"
-                    >
+                    <button onClick={handleLoadQr} disabled={qr.loading}>
                       {qr.loading ? 'Generating…' : 'Show QR Code'}
                     </button>
                   ) : (
-                    <div className="mt-3 flex flex-col items-center">
-                      <div className="bg-white p-3 rounded-xl border border-gray-200">
-                        <QRCode value={qr.token} size={160} />
-                      </div>
-                      <p className="mt-3 text-xs text-gray-500 text-center">
-                        Show this QR at check-in. {qr.expiresAt ? `Expires at: ${qr.expiresAt}` : ''}
+
+                    // Show QR code
+                    <div>
+                      <QRCode value={qr.token} size={160} />
+
+                      <p>
+                        Show this QR at check-in.
+                        {qr.expiresAt ? ` Expires at: ${qr.expiresAt}` : ''}
                       </p>
-                      <button
-                        onClick={handleLoadQr}
-                        className="mt-3 text-xs font-bold uppercase tracking-widest text-emerald-700/80 hover:text-emerald-800"
-                      >
+
+                      {/* Regenerate QR */}
+                      <button onClick={handleLoadQr}>
                         Regenerate
                       </button>
                     </div>
                   )}
 
-                  {qr.error && <p className="mt-3 text-sm text-red-600">{qr.error}</p>}
+                  {/* Error display */}
+                  {qr.error && <p>{qr.error}</p>}
                 </div>
               )}
             </div>
+
           </div>
         )}
+
       </div>
     </RoleSidebarLayout>
   )
