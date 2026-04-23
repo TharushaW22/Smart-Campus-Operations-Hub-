@@ -1,0 +1,666 @@
+{
+  "info": {
+    "name": "Smart Campus Operations API",
+    "_postman_id": "smart-campus-2026",
+    "description": "Complete API collection for Smart Campus Operations. Login first — token auto-saves to {{token}} and is used by all other requests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "token",   "value": "",                     "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Login via Google OAuth2 (browser flow)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/oauth2/authorization/google", "host": ["{{baseUrl}}"], "path": ["oauth2","authorization","google"] },
+            "description": "Open this URL in a browser to complete Google OAuth2 login. After login, the backend redirects to the frontend with a JWT token in the URL. Copy that token and set it in the collection variable 'token', OR use the Set Token request below."
+          }
+        },
+        {
+          "name": "Set Token Manually",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Paste your JWT token as the value of the 'token' variable",
+                  "// in the collection variables panel (top-right 'Variables' tab).",
+                  "// All requests will then use it automatically via {{token}}."
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api","auth","me"] },
+            "description": "Paste your JWT token in the collection Variables panel under 'token'. This request verifies it works."
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api","auth","me"] },
+            "description": "Returns the currently authenticated user's profile."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "👤 Profile",
+      "item": [
+        {
+          "name": "Update My Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name",        "value": "John Doe",          "type": "text" },
+                { "key": "phone",       "value": "+94771234567",       "type": "text" },
+                { "key": "address",     "value": "123 Campus Road",    "type": "text" },
+                { "key": "removePhoto", "value": "false",              "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] }
+          }
+        },
+        {
+          "name": "Update Profile With Photo",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name",  "value": "John Doe", "type": "text" },
+                { "key": "photo", "type": "file",      "src": "" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] },
+            "description": "Select a file for the 'photo' field."
+          }
+        },
+        {
+          "name": "Remove Profile Photo",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "removePhoto", "value": "true", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/profile", "host": ["{{baseUrl}}"], "path": ["api","profile"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "👥 Admin — Users",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/admin/users", "host": ["{{baseUrl}}"], "path": ["api","admin","users"] }
+          }
+        },
+        {
+          "name": "Edit User Profile (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name",    "value": "Updated Name", "type": "text" },
+                { "key": "phone",   "value": "+94771234567", "type": "text" },
+                { "key": "address", "value": "New Address",  "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/users/1/profile", "host": ["{{baseUrl}}"], "path": ["api","admin","users","1","profile"] },
+            "description": "Replace '1' with the actual user ID."
+          }
+        },
+        {
+          "name": "Assign Role to User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization",  "value": "Bearer {{token}}" },
+              { "key": "Content-Type",   "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"TECHNICIAN\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/admin/users/1/role", "host": ["{{baseUrl}}"], "path": ["api","admin","users","1","role"] },
+            "description": "Valid roles: USER, ADMIN, TECHNICIAN. Replace '1' with user ID."
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/admin/users/1", "host": ["{{baseUrl}}"], "path": ["api","admin","users","1"] },
+            "description": "Replace '1' with the user ID to delete."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📦 Resources",
+      "item": [
+        {
+          "name": "Get All Resources (paginated)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/resources?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","resources"],
+              "query": [
+                { "key": "page",   "value": "0" },
+                { "key": "size",   "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "type",   "value": "", "disabled": true },
+                { "key": "status", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Resource by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/resources/1", "host": ["{{baseUrl}}"], "path": ["api","resources","1"] }
+          }
+        },
+        {
+          "name": "Check Resource Availability",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/resources/1/availability", "host": ["{{baseUrl}}"], "path": ["api","resources","1","availability"] }
+          }
+        },
+        {
+          "name": "Get Resource Summary (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/resources/summary", "host": ["{{baseUrl}}"], "path": ["api","resources","summary"] }
+          }
+        },
+        {
+          "name": "Create Resource (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Conference Room A\",\n  \"type\": \"Room\",\n  \"capacity\": 20,\n  \"location\": \"Block A, Level 2\",\n  \"status\": \"Available\",\n  \"description\": \"Fully equipped conference room with projector.\",\n  \"amenities\": \"Projector, Whiteboard, AC\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/resources", "host": ["{{baseUrl}}"], "path": ["api","resources"] }
+          }
+        },
+        {
+          "name": "Upload Resource Image (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "image", "type": "file", "src": "" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/resources/upload-image", "host": ["{{baseUrl}}"], "path": ["api","resources","upload-image"] }
+          }
+        },
+        {
+          "name": "Update Resource (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Conference Room A Updated\",\n  \"type\": \"Room\",\n  \"capacity\": 25,\n  \"location\": \"Block A, Level 2\",\n  \"status\": \"Available\",\n  \"description\": \"Updated description.\",\n  \"amenities\": \"Projector, Whiteboard, AC, TV\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/resources/1", "host": ["{{baseUrl}}"], "path": ["api","resources","1"] }
+          }
+        },
+        {
+          "name": "Delete Resource (Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/resources/1", "host": ["{{baseUrl}}"], "path": ["api","resources","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📅 Bookings",
+      "item": [
+        {
+          "name": "Create Booking (User)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceId\": 1,\n  \"date\": \"2026-05-01\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"11:00\",\n  \"purpose\": \"Team meeting for project discussion\",\n  \"expectedAttendees\": 10\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/bookings", "host": ["{{baseUrl}}"], "path": ["api","bookings"] }
+          }
+        },
+        {
+          "name": "Get My Bookings (User)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/bookings/my", "host": ["{{baseUrl}}"], "path": ["api","bookings","my"] }
+          }
+        },
+        {
+          "name": "Get All Bookings (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","bookings"],
+              "query": [
+                { "key": "status",     "value": "PENDING",     "disabled": true },
+                { "key": "date",       "value": "2026-05-01",  "disabled": true },
+                { "key": "resourceId", "value": "1",           "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Booking by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/bookings/1", "host": ["{{baseUrl}}"], "path": ["api","bookings","1"] }
+          }
+        },
+        {
+          "name": "Get Booking Analytics (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/bookings/analytics", "host": ["{{baseUrl}}"], "path": ["api","bookings","analytics"] }
+          }
+        },
+        {
+          "name": "Approve Booking (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/bookings/1/status", "host": ["{{baseUrl}}"], "path": ["api","bookings","1","status"] }
+          }
+        },
+        {
+          "name": "Reject Booking (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"REJECTED\",\n  \"adminReason\": \"Resource is reserved for maintenance on that day.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/bookings/1/status", "host": ["{{baseUrl}}"], "path": ["api","bookings","1","status"] }
+          }
+        },
+        {
+          "name": "Cancel Booking (User)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELLED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/bookings/1/status", "host": ["{{baseUrl}}"], "path": ["api","bookings","1","status"] }
+          }
+        },
+        {
+          "name": "Edit Booking (User — PENDING only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"resourceId\": 1,\n  \"date\": \"2026-05-02\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"12:00\",\n  \"purpose\": \"Updated purpose\",\n  \"expectedAttendees\": 8\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/bookings/1", "host": ["{{baseUrl}}"], "path": ["api","bookings","1"] }
+          }
+        },
+        {
+          "name": "Delete Booking (User — PENDING only)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/bookings/1", "host": ["{{baseUrl}}"], "path": ["api","bookings","1"] }
+          }
+        },
+        {
+          "name": "Generate Check-In Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/bookings/1/checkin-token", "host": ["{{baseUrl}}"], "path": ["api","bookings","1","checkin-token"] }
+          }
+        },
+        {
+          "name": "Check In by Token (Admin/Technician)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"PASTE_CHECKIN_TOKEN_HERE\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/bookings/checkin", "host": ["{{baseUrl}}"], "path": ["api","bookings","checkin"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🔔 Notifications",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api","notifications"] }
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications/unread-count", "host": ["{{baseUrl}}"], "path": ["api","notifications","unread-count"] }
+          }
+        },
+        {
+          "name": "Mark Notification as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications/1/read", "host": ["{{baseUrl}}"], "path": ["api","notifications","1","read"] }
+          }
+        },
+        {
+          "name": "Mark All as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications/read-all", "host": ["{{baseUrl}}"], "path": ["api","notifications","read-all"] }
+          }
+        },
+        {
+          "name": "Delete Single Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications/1", "host": ["{{baseUrl}}"], "path": ["api","notifications","1"] }
+          }
+        },
+        {
+          "name": "Delete All Notifications",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications", "host": ["{{baseUrl}}"], "path": ["api","notifications"] }
+          }
+        },
+        {
+          "name": "Get Notification Preferences",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/notifications/preferences", "host": ["{{baseUrl}}"], "path": ["api","notifications","preferences"] }
+          }
+        },
+        {
+          "name": "Update Notification Preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disabledTypes\": [\"BOOKING_CREATED\", \"COMMENT_ADDED\"]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/notifications/preferences", "host": ["{{baseUrl}}"], "path": ["api","notifications","preferences"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏫 User — Resources (Browse)",
+      "item": [
+        {
+          "name": "Get Active Resources (User view)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/user/resources?page=0&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api","user","resources"],
+              "query": [
+                { "key": "page",   "value": "0" },
+                { "key": "size",   "value": "10" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "type",   "value": "", "disabled": true }
+              ]
+            },
+            "description": "User-facing resource browse — only returns active/available resources."
+          }
+        },
+        {
+          "name": "Get Resource by ID (User view)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/user/resources/1", "host": ["{{baseUrl}}"], "path": ["api","user","resources","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🎫 Tickets",
+      "item": [
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "category",         "value": "ELECTRICAL",          "type": "text" },
+                { "key": "priority",         "value": "HIGH",                "type": "text" },
+                { "key": "resourceLocation", "value": "Block A, Room 201",   "type": "text" },
+                { "key": "description",      "value": "Power outlet not working near window.", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/api/tickets", "host": ["{{baseUrl}}"], "path": ["api","tickets"] },
+            "description": "Optionally attach an 'image' file field."
+          }
+        },
+        {
+          "name": "Get All Tickets (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tickets", "host": ["{{baseUrl}}"], "path": ["api","tickets"] }
+          }
+        },
+        {
+          "name": "Get My Tickets (User)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tickets/my", "host": ["{{baseUrl}}"], "path": ["api","tickets","my"] }
+          }
+        },
+        {
+          "name": "Get Assigned Tickets (Technician/Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tickets/assigned", "host": ["{{baseUrl}}"], "path": ["api","tickets","assigned"] }
+          }
+        },
+        {
+          "name": "Get Ticket by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tickets/1", "host": ["{{baseUrl}}"], "path": ["api","tickets","1"] }
+          }
+        },
+        {
+          "name": "Update Ticket Status (Admin/Technician)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"HIGH\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/tickets/1", "host": ["{{baseUrl}}"], "path": ["api","tickets","1"] }
+          }
+        },
+        {
+          "name": "Assign Technician (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"technicianId\": 2\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/tickets/1/assign", "host": ["{{baseUrl}}"], "path": ["api","tickets","1","assign"] }
+          }
+        },
+        {
+          "name": "Get Ticket Comments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tickets/1/comments", "host": ["{{baseUrl}}"], "path": ["api","tickets","1","comments"] }
+          }
+        },
+        {
+          "name": "Add Comment to Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Technician is on the way to fix this issue.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/tickets/1/comments", "host": ["{{baseUrl}}"], "path": ["api","tickets","1","comments"] }
+          }
+        },
+        {
+          "name": "Update Comment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated comment content.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/tickets/1/comments/1", "host": ["{{baseUrl}}"], "path": ["api","tickets","1","comments","1"] }
+          }
+        },
+        {
+          "name": "Delete Comment",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{baseUrl}}/api/tickets/1/comments/1", "host": ["{{baseUrl}}"], "path": ["api","tickets","1","comments","1"] }
+          }
+        }
+      ]
+    }
+
+  ]
+}
