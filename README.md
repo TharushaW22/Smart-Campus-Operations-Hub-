@@ -120,7 +120,7 @@ git clone https://github.com/Vishwaabeyrathna/it3030-paf-2026-smart-campus-y3s2-
 cd it3030-paf-2026-smart-campus-operations
 ```
 
-### 2. Set Up the Database
+### 2. Set Up the Database using MySQL
 
 Open MySQL and create the database:
 
