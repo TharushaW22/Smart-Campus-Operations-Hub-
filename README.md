@@ -178,6 +178,7 @@ app.checkin.hmacSecret=YOUR_CHECKIN_SECRET
 ```bash
 cd front-end
 npm install
+npm run  dev
 ```
 
 ---
@@ -320,7 +321,7 @@ copy(localStorage.getItem('token'))
 
 ---
 
-## Security Notes
+## Security Notes that required 
 
 - `application.properties` is excluded from git via `.gitignore` — never commit it
 - Uploaded files (`uploads/`) are excluded from git
@@ -329,4 +330,4 @@ copy(localStorage.getItem('token'))
 
 ---
 
-*IT3030 — Programming and Frameworks | Group Y3S2_WE_64 | 2026*
+*IT3030 — Programming and Frameworks | Group Y3S2_WD | 2026*
