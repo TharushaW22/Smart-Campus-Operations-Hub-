@@ -14,8 +14,6 @@ function getAvatarSrc(picture) {
   return `${BACKEND_URL}${picture}`
 }
 
-// ── Validation helpers ────────────────────────────────────────────────────────
-
 function validateName(value) {
   if (!value || !value.trim()) return 'Full name is required.'
   if (value.trim().length < 2) return 'Name must be at least 2 characters.'
