@@ -38,7 +38,7 @@ Authentication is handled entirely through **Google OAuth2** — no passwords re
 | **IT23374324** | Mathumitha.E| Notifications system · Role management · OAuth2 integration improvements · **Notification preferences (enable/disable per category)** *(Acceptable Innovation)* |
 | **IT23164376** | Wanasinghe W M T P K  | Incident ticket system · File attachments · Technician assignment & status updates |
 | **IT23146556** | Wickramarathne SB | Facilities catalogue · Resource management endpoints · Image upload for resources |
-| **IT23153240** | Meedeniya M K J A | Booking workflow · Conflict checking · **QR code check-in for approved bookings** *(Acceptable Innovation)* |
+| **IT23153240** | Meedeniya M K J A | Booking workflow · Conflict checking | Admin user approve
 
 ---
 
