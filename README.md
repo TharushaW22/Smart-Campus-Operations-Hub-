@@ -16,7 +16,7 @@ A full-stack web application for managing campus resources, bookings, incident t
 - [API Testing with Postman](#api-testing-with-postman)
 - [User Roles](#user-roles)
 - [Features](#features)
-
+- [endpoints for all]
 ---
 
 ## Project Overview
