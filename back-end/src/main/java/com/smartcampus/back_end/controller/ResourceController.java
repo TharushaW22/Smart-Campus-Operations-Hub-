@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/resources")
+@RequestMapping("/api/resources")  //endpoint for resource management
 @CrossOrigin(origins = "*")
 public class ResourceController {
 
