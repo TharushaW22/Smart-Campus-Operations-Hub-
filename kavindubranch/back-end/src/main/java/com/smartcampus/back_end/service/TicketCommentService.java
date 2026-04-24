@@ -1,6 +1,5 @@
 package com.smartcampus.back_end.service;
 
-import com.smartcampus.back_end.dto.AddCommentDTO;
 import com.smartcampus.back_end.dto.TicketCommentDTO;
 import com.smartcampus.back_end.model.IncidentTicket;
 import com.smartcampus.back_end.model.Role;
